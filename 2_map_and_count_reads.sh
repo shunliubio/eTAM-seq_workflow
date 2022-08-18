@@ -28,8 +28,10 @@ rep_fa=/rRNA/sequences/rRNA.fa
 genome_fa=/genome/sequences/genome.fa
 # threads to run the bash script
 ncpus=24
-# percentage of converted As in a read to be considered as a valid read
+# minimum percentage of converted As in a read to be considered as a valid read
 A2G_percent=0.5
+# minimum read coverage in a position to be considered for output
+cov=1
 # sample name: e.g., hela.polya.wt.ftom.rep1
 sample=sample_name
 # library type: F for forward, R for reverse
@@ -54,7 +56,9 @@ samtools stats -r $rep_fa $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_na
 # filter reads by the percentage of converted As
 samtools view -@ $ncpus -hb -e "([Yf]+[Zf]>0) & ([Yf]/([Yf]+[Zf])>=$A2G_percent)" $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.bam | samtools sort -T $hisat3n_out_dir/$sample -@ $ncpus -o $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.flt.bam -
 # Count converted As and unconverted As. Here hisat-3n-table is used as an example. Other similar tools can also be used to complete the task. 
-samtools view -@ $ncpus $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.flt.bam | hisat-3n-table -u -p $ncpus --alignments - --ref $rep_fa --output-name $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.conversion.flt.txt --base-change A,G
+#samtools view -@ $ncpus $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.flt.bam | hisat-3n-table -u -p $ncpus --alignments - --ref $rep_fa --output-name $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.conversion.flt.txt --base-change A,G
+# Here, pileup2var is used.
+pileup2var -f 524 -s $strandness -g $rep_fa -b $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.flt.bam -o $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.pileup2var.flt.txt
 
 echo -e "\nhisat3n align -- genome mapping\n"
 hisat-3n -p $ncpus --time --base-change A,G --repeat --repeat-limit 1000 --bowtie2-dp 0 --no-unal --rna-strandness $strandness -x $hisat3n_index -U $hisat3n_out_dir/$sample/$sample.rmRep.fastq.gz | \
@@ -77,7 +81,9 @@ samtools stats -r $genome_fa $hisat3n_out_dir/$sample/$sample.$hisat3n_index_nam
 # filter reads by the percentage of converted As
 samtools view -@ $ncpus -hb -e "([Yf]+[Zf]>0) & ([Yf]/([Yf]+[Zf])>=$A2G_percent)" $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.bam | samtools sort -T $hisat3n_out_dir/$sample -@ $ncpus -o $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.flt.bam -
 # Count converted As and unconverted As. Here hisat-3n-table is used as an example. Other similar tools can also be used to complete the task. 
-samtools view -@ $ncpus $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.flt.bam | hisat-3n-table -p $ncpus --alignments - --ref $genome_fa --output-name $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.conversion.flt.txt --base-change A,G
+#samtools view -@ $ncpus $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.flt.bam | hisat-3n-table -p $ncpus --alignments - --ref $genome_fa --output-name $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.conversion.flt.txt --base-change A,G
+# Here, pileup2var is used.
+pileup2var -t $ncpus -f 524 -a A -c $cov -s $strandness -g $genome_fa -b $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.flt.bam -o $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.pileup2var.flt.txt
 
 rm $hisat3n_out_dir/$sample/$sample.rmRep.fastq.gz
 wait

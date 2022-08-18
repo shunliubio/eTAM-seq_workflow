@@ -5,6 +5,7 @@
 - **Cutadapt**, tested with 1.18
 - **Samtools**, tested with 1.14
 - **HISAT-3N**, tested with 2.2.1-3n
+- **pileup2var**, tested with 1.1.0
 - **R**, tested with 4.1.0. Required package: eTAMseq
 
 `eTAMseq` can be downloaded from the repository and installed using the following command in R:
