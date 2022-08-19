@@ -54,7 +54,7 @@ samtools index $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.so
 samtools stats -r $rep_fa $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.bam > $sample/$sample.$hisat3n_rep_index_name.align.sorted.stats
 
 # filter reads by the percentage of converted As
-samtools view -@ $ncpus -hb -e "([Yf]+[Zf]>0) & ([Yf]/([Yf]+[Zf])>=$A2G_percent)" $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.bam | samtools sort -T $hisat3n_out_dir/$sample -@ $ncpus -o $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.flt.bam -
+samtools view -@ $ncpus -hb -e "([Yf]+[Zf]>0) && ([Yf]/([Yf]+[Zf])>=$A2G_percent)" $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.bam | samtools sort -T $hisat3n_out_dir/$sample -@ $ncpus -o $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.flt.bam -
 # Count converted As and unconverted As. Here hisat-3n-table is used as an example. Other similar tools can also be used to complete the task. 
 #samtools view -@ $ncpus $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.align.sorted.flt.bam | hisat-3n-table -u -p $ncpus --alignments - --ref $rep_fa --output-name $hisat3n_out_dir/$sample/$sample.$hisat3n_rep_index_name.conversion.flt.txt --base-change A,G
 # Here, pileup2var is used.
@@ -79,7 +79,7 @@ samtools index $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted
 samtools stats -r $genome_fa $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.bam > $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.stats
 
 # filter reads by the percentage of converted As
-samtools view -@ $ncpus -hb -e "([Yf]+[Zf]>0) & ([Yf]/([Yf]+[Zf])>=$A2G_percent)" $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.bam | samtools sort -T $hisat3n_out_dir/$sample -@ $ncpus -o $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.flt.bam -
+samtools view -@ $ncpus -hb -e "([Yf]+[Zf]>0) && ([Yf]/([Yf]+[Zf])>=$A2G_percent)" $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.bam | samtools sort -T $hisat3n_out_dir/$sample -@ $ncpus -o $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.flt.bam -
 # Count converted As and unconverted As. Here hisat-3n-table is used as an example. Other similar tools can also be used to complete the task. 
 #samtools view -@ $ncpus $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.align.sorted.dedup.flt.bam | hisat-3n-table -p $ncpus --alignments - --ref $genome_fa --output-name $hisat3n_out_dir/$sample/$sample.$hisat3n_index_name.conversion.flt.txt --base-change A,G
 # Here, pileup2var is used.
