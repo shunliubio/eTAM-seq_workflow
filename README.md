@@ -16,4 +16,4 @@ install.packages("eTAMseq_x.x.x.tar.gz", repos = NULL, type = "source")
 
 ## Citation:
 
-Xiao, Y., Liu S., Ge R., et al. Transcriptome-Wide Profiling and Quantification of *N*<sup>6</sup>-methyladenosine by Enzyme-Assisted Adenosine Deamination.
+Xiao, Y., Liu S., Ge R., et al. Transcriptome-Wide Profiling and Quantification of *N*<sup>6</sup>-methyladenosine by Enzyme-Assisted Adenosine Deamination. Nat Biotechnol. 2023 Jul;41(7):9931003. [PMID: 36593412](https://pubmed.ncbi.nlm.nih.gov/36593412)
